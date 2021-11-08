@@ -1,8 +1,11 @@
 # Sudoku Solver AI
 
+import numpy as np
 import sys
+from PIL import Image, ImageDraw, ImageFont
 
-class ai:
+
+class AI:
     def __init__(self):
         """Initializing the array to solve"""
         with open(sys.argv[1], 'r') as f:
@@ -99,9 +102,7 @@ class ai:
                             lis = list(self.arr[i])
                             lis[j]=possibilities[0]
                             self.arr[i] = "".join(lis)
-            
 
-            
 
     def show(self):
         """Displaying the result"""
@@ -113,12 +114,51 @@ class ai:
         for i in self.arr:
             print(i)
     
+
+    def generateImage(self):
+        """Generating an Image to display the output"""
+        img = Image.new('RGB', size=(900,1000), color=(255,255,255))
+
+        # drawing the board
+        draw = ImageDraw.Draw(img)
+        for i in range(1,9):
+            if i%3==0:
+                width=6
+            else:
+                width=3
+            draw.line([(100*i,100),(100*i,1000)], fill=0, width=width)
+            draw.line([(0,100*i+100),(1000,100*i+100)], fill=0, width=width)
+        draw.line([(0,100),(1000,100)], fill=0, width=6)
+
+        # text
+        font = ImageFont.truetype("ARIAL.woff", 70)
+
+        # heading
+        draw.text((330, 20),"Sudoku",(0,0,255),font=font)
+
+        # plotting input
+        for i in range(9):
+            for j in range(9):
+                if self.input[i][j]!="-":
+                    x = 30 + 100*j
+                    y = 110 + 100*i
+                    draw.text((x, y),self.input[i][j],(0,0,0),font=font)
+                else:
+                    x = 30 + 100*j
+                    y = 110 + 100*i
+                    draw.text((x, y),self.arr[i][j],(255,0,0),font=font)
+
+        img.show()
+        img.save('output.png')
+
     def solve(self):
         """Putting everything into place"""
         self.main()
         self.show()
+        self.generateImage()
 
 
 
-sudoku = ai()
+
+sudoku = AI()
 sudoku.solve()
